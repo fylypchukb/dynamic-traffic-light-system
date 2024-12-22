@@ -1,52 +1,58 @@
 ﻿import cv2
 import time
 from ultralytics import YOLO
+from modules import initialize_camera, load_config, capture_frame, run_detection, display_frame
 
-# Load the YOLO model
-model = YOLO("yolo11s.pt")
 
-# Open the camera feed (0 for the default camera)
-cap = cv2.VideoCapture(0)
+def main():
+    """
+        Main function to load configuration, initialize camera, capture frames,
+        run YOLO detection, and display frames if enabled.
+    """
+    # Load configuration
+    config = load_config("config.ini")
 
-# Initialize the timer
-last_frame_time = 0
+    # Extract configuration parameters
+    camera_source = int(config.get("Settings", "camera_source", fallback=0))
+    frame_interval = float(config.get("Settings", "frame_interval", fallback=1))
+    show_frame = config.getboolean("Settings", "show_frame", fallback=False)
+    detection_confidence = float(config.get("Settings", "detection_confidence", fallback=0.7))
 
-frame_interval = 1  # One frame per second
-show_frame = False
+    # Load the YOLO model
+    model = YOLO(config.get("Settings", "model_path", fallback="yolo11s.pt"))
 
-# Loop through the video frames
-while cap.isOpened():
-    # Get the current time
-    current_time = time.time()
+    # Initialize camera
+    cap = initialize_camera(camera_source)
 
-    # Read a frame from the camera if enough time has passed
-    if current_time - last_frame_time >= frame_interval:
-        success, frame = cap.read()
-        last_frame_time = current_time
+    last_frame_time = 0
 
-        if success:
-            # Run YOLO inference on the frame
-            results = model(frame)
+    try:
+        while cap.isOpened():
+            current_time = time.time()
 
-            # Check if any cars are detected with confidence > 70%
-            for result in results:
-                for detection in result.boxes:
-                    if detection.cls == 0 and detection.conf > 0.7:  # Class ID for 'car'
-                        print("Car detected with confidence:", detection.conf)
+            # Capture a frame if enough time has passed
+            if current_time - last_frame_time >= frame_interval:
+                frame = capture_frame(cap)
+                last_frame_time = current_time
 
-            # Display the frame with detections if enabled
-            if show_frame:
-                annotated_frame = results[0].plot()
-                cv2.imshow("YOLO Inference", annotated_frame)
+                if frame is not None:
+                    # Run YOLO detection
+                    results = run_detection(model, frame, detection_confidence)
 
-            # Check for key press regardless of display status
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
-        else:
-            # Break the loop if the end of the video is reached
-            break
+                    # Display frame if enabled
+                    if show_frame:
+                        display_frame(results)
 
-# Ensure proper release and closure even if window is not shown
-cap.release()
-if show_frame:
-    cv2.destroyAllWindows()
+                    # Check for quit command
+                    if cv2.waitKey(1) & 0xFF == ord("q"):
+                        break
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        cap.release()
+        if show_frame:
+            cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()
