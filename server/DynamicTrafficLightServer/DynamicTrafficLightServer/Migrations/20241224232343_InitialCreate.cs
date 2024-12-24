@@ -52,16 +52,23 @@ namespace DynamicTrafficLightServer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdateById = table.Column<int>(type: "int", nullable: false),
-                    LastUpdatedById = table.Column<int>(type: "int", nullable: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Intersections", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Intersections_Users_LastUpdatedById",
-                        column: x => x.LastUpdatedById,
+                        name: "FK_Intersections_Users_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Intersections_Users_LastUpdateById",
+                        column: x => x.LastUpdateById,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -75,9 +82,11 @@ namespace DynamicTrafficLightServer.Migrations
                     IntersectionId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdateById = table.Column<int>(type: "int", nullable: false),
-                    LastUpdatedById = table.Column<int>(type: "int", nullable: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,8 +98,13 @@ namespace DynamicTrafficLightServer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TrafficLights_Users_LastUpdatedById",
-                        column: x => x.LastUpdatedById,
+                        name: "FK_TrafficLights_Users_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TrafficLights_Users_LastUpdateById",
+                        column: x => x.LastUpdateById,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -108,9 +122,11 @@ namespace DynamicTrafficLightServer.Migrations
                     SequenceGreenTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DefaultGreenTime = table.Column<int>(type: "int", nullable: false),
                     DefaultRedTime = table.Column<int>(type: "int", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdateById = table.Column<int>(type: "int", nullable: false),
-                    LastUpdatedById = table.Column<int>(type: "int", nullable: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,16 +138,26 @@ namespace DynamicTrafficLightServer.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Configurations_Users_LastUpdatedById",
-                        column: x => x.LastUpdatedById,
+                        name: "FK_Configurations_Users_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Configurations_Users_LastUpdateById",
+                        column: x => x.LastUpdateById,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Configurations_LastUpdatedById",
+                name: "IX_Configurations_CreatedById",
                 table: "Configurations",
-                column: "LastUpdatedById");
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Configurations_LastUpdateById",
+                table: "Configurations",
+                column: "LastUpdateById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Configurations_TrafficLightId",
@@ -139,9 +165,19 @@ namespace DynamicTrafficLightServer.Migrations
                 column: "TrafficLightId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Intersections_LastUpdatedById",
+                name: "IX_Intersections_CreatedById",
                 table: "Intersections",
-                column: "LastUpdatedById");
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Intersections_LastUpdateById",
+                table: "Intersections",
+                column: "LastUpdateById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrafficLights_CreatedById",
+                table: "TrafficLights",
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrafficLights_IntersectionId",
@@ -149,9 +185,9 @@ namespace DynamicTrafficLightServer.Migrations
                 column: "IntersectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrafficLights_LastUpdatedById",
+                name: "IX_TrafficLights_LastUpdateById",
                 table: "TrafficLights",
-                column: "LastUpdatedById");
+                column: "LastUpdateById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AuthIdentityId",

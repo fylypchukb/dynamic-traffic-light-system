@@ -30,20 +30,26 @@ namespace DynamicTrafficLightServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<int>("DefaultGreenTime")
                         .HasColumnType("int");
 
                     b.Property<int>("DefaultRedTime")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LastUpdateById")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastUpdated")
+                    b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastUpdatedById")
-                        .HasColumnType("int");
 
                     b.Property<int>("MaxGreenTime")
                         .HasColumnType("int");
@@ -62,7 +68,9 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LastUpdatedById");
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("LastUpdateById");
 
                     b.HasIndex("TrafficLightId");
 
@@ -82,14 +90,20 @@ namespace DynamicTrafficLightServer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LastUpdateById")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastUpdated")
+                    b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastUpdatedById")
-                        .HasColumnType("int");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -98,7 +112,9 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LastUpdatedById");
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("LastUpdateById");
 
                     b.ToTable("Intersections");
                 });
@@ -129,17 +145,23 @@ namespace DynamicTrafficLightServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<int>("IntersectionId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LastUpdateById")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastUpdated")
+                    b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastUpdatedById")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -151,9 +173,11 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("IntersectionId");
 
-                    b.HasIndex("LastUpdatedById");
+                    b.HasIndex("LastUpdateById");
 
                     b.ToTable("TrafficLights");
                 });
@@ -186,15 +210,25 @@ namespace DynamicTrafficLightServer.Migrations
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Configuration", b =>
                 {
+                    b.HasOne("DynamicTrafficLightServer.Models.User", "CreatedBy")
+                        .WithMany("CreatedConfigurations")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("DynamicTrafficLightServer.Models.User", "LastUpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("LastUpdatedById");
+                        .WithMany("LastUpdateConfigurations")
+                        .HasForeignKey("LastUpdateById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("DynamicTrafficLightServer.Models.TrafficLight", "TrafficLight")
-                        .WithMany()
+                        .WithMany("Configurations")
                         .HasForeignKey("TrafficLightId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("LastUpdatedBy");
 
@@ -203,15 +237,31 @@ namespace DynamicTrafficLightServer.Migrations
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Intersection", b =>
                 {
+                    b.HasOne("DynamicTrafficLightServer.Models.User", "CreatedBy")
+                        .WithMany("CreatedIntersections")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("DynamicTrafficLightServer.Models.User", "LastUpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("LastUpdatedById");
+                        .WithMany("LastUpdatedIntersections")
+                        .HasForeignKey("LastUpdateById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("LastUpdatedBy");
                 });
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.TrafficLight", b =>
                 {
+                    b.HasOne("DynamicTrafficLightServer.Models.User", "CreatedBy")
+                        .WithMany("CreatedTrafficLights")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("DynamicTrafficLightServer.Models.Intersection", "Intersection")
                         .WithMany("TrafficLights")
                         .HasForeignKey("IntersectionId")
@@ -219,8 +269,12 @@ namespace DynamicTrafficLightServer.Migrations
                         .IsRequired();
 
                     b.HasOne("DynamicTrafficLightServer.Models.User", "LastUpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("LastUpdatedById");
+                        .WithMany("LastUpdatedTrafficLights")
+                        .HasForeignKey("LastUpdateById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("Intersection");
 
@@ -246,6 +300,26 @@ namespace DynamicTrafficLightServer.Migrations
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DynamicTrafficLightServer.Models.TrafficLight", b =>
+                {
+                    b.Navigation("Configurations");
+                });
+
+            modelBuilder.Entity("DynamicTrafficLightServer.Models.User", b =>
+                {
+                    b.Navigation("CreatedConfigurations");
+
+                    b.Navigation("CreatedIntersections");
+
+                    b.Navigation("CreatedTrafficLights");
+
+                    b.Navigation("LastUpdateConfigurations");
+
+                    b.Navigation("LastUpdatedIntersections");
+
+                    b.Navigation("LastUpdatedTrafficLights");
                 });
 #pragma warning restore 612, 618
         }

@@ -19,6 +19,42 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .HasIndex(u => u.AuthIdentityId)
             .IsUnique();
 
+        modelBuilder.Entity<Intersection>()
+            .HasOne(i => i.CreatedBy)
+            .WithMany(u => u.CreatedIntersections)
+            .HasForeignKey(i => i.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Intersection>()
+            .HasOne(i => i.LastUpdatedBy)
+            .WithMany(u => u.LastUpdatedIntersections)
+            .HasForeignKey(i => i.LastUpdateById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TrafficLight>()
+            .HasOne(t => t.CreatedBy)
+            .WithMany(u => u.CreatedTrafficLights)
+            .HasForeignKey(t => t.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TrafficLight>()
+            .HasOne(t => t.LastUpdatedBy)
+            .WithMany(u => u.LastUpdatedTrafficLights)
+            .HasForeignKey(t => t.LastUpdateById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Configuration>()
+            .HasOne(c => c.CreatedBy)
+            .WithMany(u => u.CreatedConfigurations)
+            .HasForeignKey(c => c.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Configuration>()
+            .HasOne(c => c.LastUpdatedBy)
+            .WithMany(u => u.LastUpdateConfigurations)
+            .HasForeignKey(c => c.LastUpdateById)
+            .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<Configuration>()
             .Property(p => p.SequenceGreenTime)
             .HasConversion(

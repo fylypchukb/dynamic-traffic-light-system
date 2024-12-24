@@ -10,9 +10,13 @@ public class Configuration
     public Dictionary<int, int>? SequenceGreenTime { get; set; }
     public int DefaultGreenTime { get; set; }
     public int DefaultRedTime { get; set; }
-    public DateTime LastUpdated { get; set; }
+    public DateTime CreateTime { get; set; }
+    public int CreatedById { get; set; }
+    public DateTime LastUpdateTime { get; set; }
     public int LastUpdateById { get; set; }
+    public bool IsActive { get; set; }
 
     public TrafficLight? TrafficLight { get; set; }
+    public User? CreatedBy { get; set; }
     public User? LastUpdatedBy { get; set; }
 }
