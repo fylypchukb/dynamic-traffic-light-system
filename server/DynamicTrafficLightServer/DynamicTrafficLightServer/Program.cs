@@ -14,6 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IIntersectionRepository, IntersectionRepository>();
+builder.Services.AddScoped<ITrafficLightRepository, TrafficLightRepository>();
+builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
 
 var app = builder.Build();
 
