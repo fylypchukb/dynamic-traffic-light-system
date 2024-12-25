@@ -1,4 +1,6 @@
 using DynamicTrafficLightServer.Data;
+using DynamicTrafficLightServer.Repositories.Implementations;
+using DynamicTrafficLightServer.Repositories.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,8 @@ builder.Services.AddDbContext<DataContext>(opt =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IIntersectionRepository, IntersectionRepository>();
 
 var app = builder.Build();
 
