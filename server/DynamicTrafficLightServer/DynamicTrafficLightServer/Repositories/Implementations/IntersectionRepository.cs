@@ -20,7 +20,10 @@ public class IntersectionRepository(DataContext context) : IIntersectionReposito
     /// <inheritdoc />
     public async Task<Intersection?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await context.Intersections.FindAsync([id], cancellationToken);
+        return await context.Intersections
+            .Include(i => i.CreatedBy)
+            .Include(i => i.LastUpdatedBy)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -28,6 +31,14 @@ public class IntersectionRepository(DataContext context) : IIntersectionReposito
     {
         await context.Intersections.AddAsync(intersection, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+
+        await context.Entry(intersection)
+            .Reference(i => i.CreatedBy)
+            .LoadAsync(cancellationToken);
+
+        await context.Entry(intersection)
+            .Reference(i => i.LastUpdatedBy)
+            .LoadAsync(cancellationToken);
     }
 
     /// <inheritdoc />

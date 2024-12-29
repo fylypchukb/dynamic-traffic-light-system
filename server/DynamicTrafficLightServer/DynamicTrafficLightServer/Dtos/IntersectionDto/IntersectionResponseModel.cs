@@ -9,4 +9,6 @@ public record IntersectionResponseModel
     public DateTime CreateTime { get; set; }
     public string LastUpdatedByName { get; set; } = string.Empty;
     public DateTime LastUpdateTime { get; set; }
+
+    public bool IsActive { get; set; } = true;
 }

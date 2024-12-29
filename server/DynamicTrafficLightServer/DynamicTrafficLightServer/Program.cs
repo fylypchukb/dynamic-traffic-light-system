@@ -2,6 +2,8 @@ using System.Reflection;
 using DynamicTrafficLightServer.Data;
 using DynamicTrafficLightServer.Repositories.Implementations;
 using DynamicTrafficLightServer.Repositories.Interfaces;
+using DynamicTrafficLightServer.Services.Implementations;
+using DynamicTrafficLightServer.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -23,6 +25,8 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddScoped<IIntersectionRepository, IntersectionRepository>();
 builder.Services.AddScoped<ITrafficLightRepository, TrafficLightRepository>();
 builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
+
+builder.Services.AddScoped<IIntersectionService, IntersectionService>();
 
 var app = builder.Build();
 

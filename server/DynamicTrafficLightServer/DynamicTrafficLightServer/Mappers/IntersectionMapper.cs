@@ -9,7 +9,6 @@ public static partial class IntersectionMapper
 {
     [MapperIgnoreSource(nameof(Intersection.CreatedById))]
     [MapperIgnoreSource(nameof(Intersection.LastUpdatedById))]
-    [MapperIgnoreSource(nameof(Intersection.IsActive))]
     [MapperIgnoreSource(nameof(Intersection.TrafficLights))]
     [MapProperty(nameof(Intersection.CreatedBy.Name), nameof(IntersectionResponseModel.CreatedByName))]
     [MapProperty(nameof(Intersection.LastUpdatedBy.Name), nameof(IntersectionResponseModel.LastUpdatedByName))]
@@ -22,7 +21,6 @@ public static partial class IntersectionMapper
     [MapperIgnoreTarget(nameof(Intersection.LastUpdatedBy))]
     [MapperIgnoreTarget(nameof(Intersection.CreateTime))]
     [MapperIgnoreTarget(nameof(Intersection.LastUpdateTime))]
-    [MapperIgnoreTarget(nameof(Intersection.IsActive))]
     [MapperIgnoreTarget(nameof(Intersection.TrafficLights))]
     public static partial Intersection ToModel(IntersectionRequestModel requestModel);
 }

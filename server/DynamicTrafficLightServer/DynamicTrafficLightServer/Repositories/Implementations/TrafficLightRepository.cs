@@ -10,13 +10,20 @@ public class TrafficLightRepository(DataContext context) : ITrafficLightReposito
     /// <inheritdoc />
     public async Task<List<TrafficLight>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.TrafficLights.AsNoTracking().ToListAsync(cancellationToken);
+        return await context.TrafficLights
+            .AsNoTracking()
+            .Include(i => i.CreatedBy)
+            .Include(i => i.LastUpdatedBy)
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task<TrafficLight?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await context.TrafficLights.FindAsync([id], cancellationToken);
+        return await context.TrafficLights
+            .Include(i => i.CreatedBy)
+            .Include(i => i.LastUpdatedBy)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />
