@@ -28,7 +28,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<Intersection>()
             .HasOne(i => i.LastUpdatedBy)
             .WithMany(u => u.LastUpdatedIntersections)
-            .HasForeignKey(i => i.LastUpdateById)
+            .HasForeignKey(i => i.LastUpdatedById)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TrafficLight>()
@@ -40,7 +40,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<TrafficLight>()
             .HasOne(t => t.LastUpdatedBy)
             .WithMany(u => u.LastUpdatedTrafficLights)
-            .HasForeignKey(t => t.LastUpdateById)
+            .HasForeignKey(t => t.LastUpdatedById)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Configuration>()
@@ -52,7 +52,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<Configuration>()
             .HasOne(c => c.LastUpdatedBy)
             .WithMany(u => u.LastUpdateConfigurations)
-            .HasForeignKey(c => c.LastUpdateById)
+            .HasForeignKey(c => c.LastUpdatedById)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Configuration>()

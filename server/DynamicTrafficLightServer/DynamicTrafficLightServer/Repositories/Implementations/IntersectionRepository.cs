@@ -10,7 +10,11 @@ public class IntersectionRepository(DataContext context) : IIntersectionReposito
     /// <inheritdoc />
     public async Task<List<Intersection>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Intersections.AsNoTracking().ToListAsync(cancellationToken);
+        return await context.Intersections
+            .AsNoTracking()
+            .Include(i => i.CreatedBy)
+            .Include(i => i.LastUpdatedBy)
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />
