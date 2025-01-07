@@ -20,19 +20,20 @@ public class IntersectionService(IIntersectionRepository intersectionRepository)
     }
 
     /// <inheritdoc />
-    public async Task<ServiceResponse<IntersectionResponseModel>> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<ServiceResponse<IntersectionResponseModel>> GetByIdAsync(int id,
+        CancellationToken cancellationToken)
     {
         var intersection = await intersectionRepository.GetByIdAsync(id, cancellationToken);
 
         if (intersection is null)
         {
-            return new ServiceResponse<IntersectionResponseModel>()
+            return new ServiceResponse<IntersectionResponseModel>
             {
                 StatusCode = HttpStatusCode.NotFound,
                 ErrorMessage = "Intersection not found."
             };
         }
-        
+
         return new ServiceResponse<IntersectionResponseModel>
         {
             Result = IntersectionMapper.ToResponseModel(intersection)
@@ -49,10 +50,9 @@ public class IntersectionService(IIntersectionRepository intersectionRepository)
         intersection.CreateTime = DateTime.UtcNow;
         intersection.LastUpdatedById = 1; // TODO: Get from user context.
         intersection.LastUpdateTime = DateTime.UtcNow;
-        intersection.IsActive = true;
-        
+
         await intersectionRepository.AddAsync(intersection, cancellationToken);
-        
+
         return new ServiceResponse<IntersectionResponseModel>
         {
             StatusCode = HttpStatusCode.Created,
@@ -64,10 +64,8 @@ public class IntersectionService(IIntersectionRepository intersectionRepository)
     public async Task<ServiceResponse<IntersectionResponseModel>> UpdateAsync(int id,
         IntersectionRequestModel intersectionRequestModel, CancellationToken cancellationToken)
     {
-        var updatedIntersection = IntersectionMapper.ToModel(intersectionRequestModel);
-        
         var intersection = await intersectionRepository.GetByIdAsync(id, cancellationToken);
-        
+
         if (intersection is null)
         {
             return new ServiceResponse<IntersectionResponseModel>
@@ -77,14 +75,14 @@ public class IntersectionService(IIntersectionRepository intersectionRepository)
             };
         }
 
-        intersection.City = updatedIntersection.City;
-        intersection.Location = updatedIntersection.Location;
+        intersection.City = intersectionRequestModel.City;
+        intersection.Location = intersectionRequestModel.Location;
         intersection.LastUpdateTime = DateTime.UtcNow;
         intersection.LastUpdatedById = 1; // TODO: Get from user context.
-        intersection.IsActive = updatedIntersection.IsActive;
-        
+        intersection.IsActive = intersectionRequestModel.IsActive;
+
         await intersectionRepository.UpdateAsync(intersection, cancellationToken);
-        
+
         return new ServiceResponse<IntersectionResponseModel>
         {
             Result = IntersectionMapper.ToResponseModel(intersection)
@@ -92,10 +90,11 @@ public class IntersectionService(IIntersectionRepository intersectionRepository)
     }
 
     /// <inheritdoc />
-    public async Task<ServiceResponse<IntersectionResponseModel>> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<ServiceResponse<IntersectionResponseModel>> DeleteAsync(int id,
+        CancellationToken cancellationToken)
     {
         var intersection = await intersectionRepository.GetByIdAsync(id, cancellationToken);
-        
+
         if (intersection is null)
         {
             return new ServiceResponse<IntersectionResponseModel>
@@ -104,7 +103,7 @@ public class IntersectionService(IIntersectionRepository intersectionRepository)
                 ErrorMessage = "Intersection not found."
             };
         }
-        
+
         await intersectionRepository.DeleteAsync(intersection, cancellationToken);
 
         return new ServiceResponse<IntersectionResponseModel>();

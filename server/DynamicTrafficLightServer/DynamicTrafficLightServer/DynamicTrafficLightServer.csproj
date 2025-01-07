@@ -17,8 +17,8 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="Riok.Mapperly" Version="4.1.1" />
-        <PackageReference Include="Scalar.AspNetCore" Version="1.2.72" />
+        <PackageReference Include="Riok.Mapperly" Version="4.1.1"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="1.2.72"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 </Project>

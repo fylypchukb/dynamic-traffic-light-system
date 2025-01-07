@@ -12,7 +12,7 @@ public interface IIntersectionService
     /// A list of <see cref="IntersectionResponseModel"/>.
     /// </returns>
     Task<ServiceResponse<List<IntersectionResponseModel>>> GetAllAsync(CancellationToken cancellationToken);
-    
+
     /// <summary>
     /// Asynchronously retrieves an intersection by its identifier.
     /// </summary>
@@ -45,7 +45,7 @@ public interface IIntersectionService
     /// </returns>
     Task<ServiceResponse<IntersectionResponseModel>> UpdateAsync(int id,
         IntersectionRequestModel intersectionRequestModel, CancellationToken cancellationToken);
-    
+
     /// <summary>
     /// Asynchronously deletes an intersection by its identifier.
     /// </summary>

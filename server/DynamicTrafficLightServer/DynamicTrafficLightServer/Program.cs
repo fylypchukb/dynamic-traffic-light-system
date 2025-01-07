@@ -15,6 +15,7 @@ builder.Services.AddDbContext<DataContext>(opt =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(opt =>
 {
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -27,21 +28,15 @@ builder.Services.AddScoped<ITrafficLightRepository, TrafficLightRepository>();
 builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
 
 builder.Services.AddScoped<IIntersectionService, IntersectionService>();
+builder.Services.AddScoped<ITrafficLightService, TrafficLightService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(options =>
-    {
-        options.RouteTemplate = "/openapi/{documentName}.json";
-    });
-    
-    app.MapScalarApiReference(opt =>
-    {
-        opt.HideClientButton = true;
-    });
+    app.UseSwagger(options => { options.RouteTemplate = "/openapi/{documentName}.json"; });
+
+    app.MapScalarApiReference(opt => { opt.HideClientButton = true; });
 }
 
 app.UseHttpsRedirection();
