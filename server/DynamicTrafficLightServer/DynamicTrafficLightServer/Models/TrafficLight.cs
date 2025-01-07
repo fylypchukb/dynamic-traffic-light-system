@@ -11,7 +11,7 @@ public class TrafficLight
     public DateTime CreateTime { get; set; }
     public int CreatedById { get; set; }
     public DateTime LastUpdateTime { get; set; }
-    public int LastUpdateById { get; set; }
+    public int LastUpdatedById { get; set; }
     public bool IsActive { get; set; }
 
     public Intersection? Intersection { get; set; }

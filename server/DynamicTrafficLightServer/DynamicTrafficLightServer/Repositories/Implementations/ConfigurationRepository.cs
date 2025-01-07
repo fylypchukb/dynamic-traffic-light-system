@@ -10,13 +10,20 @@ public class ConfigurationRepository(DataContext context) : IConfigurationReposi
     /// <inheritdoc />
     public async Task<List<Configuration>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Configurations.AsNoTracking().ToListAsync(cancellationToken);
+        return await context.Configurations
+            .AsNoTracking()
+            .Include(i => i.CreatedBy)
+            .Include(i => i.LastUpdatedBy)
+            .ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task<Configuration?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await context.Configurations.FindAsync([id], cancellationToken);
+        return await context.Configurations
+            .Include(i => i.CreatedBy)
+            .Include(i => i.LastUpdatedBy)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
     /// <inheritdoc />

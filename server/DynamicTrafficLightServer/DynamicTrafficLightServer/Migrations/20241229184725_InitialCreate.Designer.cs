@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DynamicTrafficLightServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241224232343_InitialCreate")]
+    [Migration("20241229184725_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -48,11 +48,11 @@ namespace DynamicTrafficLightServer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("LastUpdateById")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("LastUpdatedById")
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxGreenTime")
                         .HasColumnType("int");
@@ -73,7 +73,7 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("LastUpdateById");
+                    b.HasIndex("LastUpdatedById");
 
                     b.HasIndex("TrafficLightId");
 
@@ -102,11 +102,11 @@ namespace DynamicTrafficLightServer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("LastUpdateById")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("LastUpdatedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -117,7 +117,7 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("LastUpdateById");
+                    b.HasIndex("LastUpdatedById");
 
                     b.ToTable("Intersections");
                 });
@@ -160,11 +160,11 @@ namespace DynamicTrafficLightServer.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("LastUpdateById")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("LastUpdatedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -180,7 +180,7 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasIndex("IntersectionId");
 
-                    b.HasIndex("LastUpdateById");
+                    b.HasIndex("LastUpdatedById");
 
                     b.ToTable("TrafficLights");
                 });
@@ -197,6 +197,11 @@ namespace DynamicTrafficLightServer.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -221,7 +226,7 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasOne("DynamicTrafficLightServer.Models.User", "LastUpdatedBy")
                         .WithMany("LastUpdateConfigurations")
-                        .HasForeignKey("LastUpdateById")
+                        .HasForeignKey("LastUpdatedById")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -248,7 +253,7 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasOne("DynamicTrafficLightServer.Models.User", "LastUpdatedBy")
                         .WithMany("LastUpdatedIntersections")
-                        .HasForeignKey("LastUpdateById")
+                        .HasForeignKey("LastUpdatedById")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -273,7 +278,7 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.HasOne("DynamicTrafficLightServer.Models.User", "LastUpdatedBy")
                         .WithMany("LastUpdatedTrafficLights")
-                        .HasForeignKey("LastUpdateById")
+                        .HasForeignKey("LastUpdatedById")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

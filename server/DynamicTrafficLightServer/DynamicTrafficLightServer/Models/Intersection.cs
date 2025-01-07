@@ -10,7 +10,7 @@ public class Intersection
     public DateTime CreateTime { get; set; }
     public int CreatedById { get; set; }
     public DateTime LastUpdateTime { get; set; }
-    public int LastUpdateById { get; set; }
+    public int LastUpdatedById { get; set; }
     public bool IsActive { get; set; }
 
     public List<TrafficLight>? TrafficLights { get; set; }
