@@ -31,6 +31,14 @@ public class TrafficLightRepository(DataContext context) : ITrafficLightReposito
     {
         await context.TrafficLights.AddAsync(trafficLight, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+
+        await context.Entry(trafficLight)
+            .Reference(i => i.CreatedBy)
+            .LoadAsync(cancellationToken);
+
+        await context.Entry(trafficLight)
+            .Reference(i => i.LastUpdatedBy)
+            .LoadAsync(cancellationToken);
     }
 
     /// <inheritdoc />

@@ -13,7 +13,7 @@ public static partial class IntersectionMapper
     [MapProperty(nameof(Intersection.CreatedBy.Name), nameof(IntersectionResponseModel.CreatedByName))]
     [MapProperty(nameof(Intersection.LastUpdatedBy.Name), nameof(IntersectionResponseModel.LastUpdatedByName))]
     public static partial IntersectionResponseModel ToResponseModel(Intersection intersection);
-    
+
     [MapperIgnoreTarget(nameof(Intersection.Id))]
     [MapperIgnoreTarget(nameof(Intersection.CreatedById))]
     [MapperIgnoreTarget(nameof(Intersection.CreatedBy))]
