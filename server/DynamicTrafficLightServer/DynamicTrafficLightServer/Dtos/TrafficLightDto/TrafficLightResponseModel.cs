@@ -33,7 +33,7 @@ public record TrafficLightResponseModel
     /// <summary>
     /// The name of the user who created the traffic light.
     /// </summary>
-    public int CreatedByName { get; set; }
+    public string CreatedByName { get; set; } = string.Empty;
 
     /// <summary>
     /// The timestamp of the last update to the traffic light.
@@ -43,7 +43,7 @@ public record TrafficLightResponseModel
     /// <summary>
     /// The name of the user who last updated the traffic light.
     /// </summary>
-    public int LastUpdatedByName { get; set; }
+    public string LastUpdatedByName { get; set; } = string.Empty;
 
     /// <summary>
     /// Indicates whether the traffic light is active.
