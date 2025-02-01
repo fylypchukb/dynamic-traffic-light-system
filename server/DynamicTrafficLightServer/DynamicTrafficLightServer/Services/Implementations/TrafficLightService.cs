@@ -89,16 +89,19 @@ public class TrafficLightService(
             };
         }
 
-        var intersection =
-            await intersectionRepository.GetByIdAsync(trafficLightRequestModel.IntersectionId, cancellationToken);
-
-        if (intersection is null)
+        if (trafficLight.IntersectionId != trafficLightRequestModel.IntersectionId)
         {
-            return new ServiceResponse<TrafficLightResponseModel>
+            var intersection =
+                await intersectionRepository.GetByIdAsync(trafficLightRequestModel.IntersectionId, cancellationToken);
+            
+            if (intersection is null)
             {
-                StatusCode = HttpStatusCode.UnprocessableEntity,
-                ErrorMessage = "Intersection not found."
-            };
+                return new ServiceResponse<TrafficLightResponseModel>
+                {
+                    StatusCode = HttpStatusCode.UnprocessableEntity,
+                    ErrorMessage = "Intersection not found."
+                };
+            }
         }
 
         trafficLight.Name = trafficLightRequestModel.Name;
