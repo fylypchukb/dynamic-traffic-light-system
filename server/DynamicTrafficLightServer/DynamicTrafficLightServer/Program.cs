@@ -31,6 +31,8 @@ builder.Services.AddScoped<IIntersectionService, IntersectionService>();
 builder.Services.AddScoped<ITrafficLightService, TrafficLightService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 
+builder.Services.AddScoped<ITrafficFlowService, TrafficFlowService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

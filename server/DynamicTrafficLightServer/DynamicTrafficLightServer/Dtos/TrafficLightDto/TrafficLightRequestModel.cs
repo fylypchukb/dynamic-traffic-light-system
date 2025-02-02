@@ -1,5 +1,8 @@
 ﻿namespace DynamicTrafficLightServer.Dtos;
 
+/// <summary>
+/// Request model representing a traffic light in the API.
+/// </summary>
 public record TrafficLightRequestModel
 {
     /// <summary>

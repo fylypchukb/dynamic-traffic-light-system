@@ -54,4 +54,12 @@ public class ConfigurationRepository(DataContext context) : IConfigurationReposi
         context.Configurations.Remove(configurations);
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public Task<Configuration?> GetByTrafficLightIdAsync(int trafficLightId, CancellationToken cancellationToken)
+    {
+        return context.Configurations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.TrafficLightId == trafficLightId && s.IsActive, cancellationToken);
+    }
 }
