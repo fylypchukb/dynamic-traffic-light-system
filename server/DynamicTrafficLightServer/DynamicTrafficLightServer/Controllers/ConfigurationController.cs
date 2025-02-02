@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DynamicTrafficLightServer.Controllers;
 
+/// <summary>
+/// Controller for managing configurations.
+/// </summary>
+/// <param name="configurationService">Service for handling configuration operations.</param>
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ConfigurationController(IConfigurationService configurationService) : ControllerBase
