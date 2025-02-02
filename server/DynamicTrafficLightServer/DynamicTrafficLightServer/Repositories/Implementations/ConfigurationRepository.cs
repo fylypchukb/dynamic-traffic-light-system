@@ -31,7 +31,7 @@ public class ConfigurationRepository(DataContext context) : IConfigurationReposi
     {
         await context.Configurations.AddAsync(configurations, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         await context.Entry(configurations)
             .Reference(i => i.CreatedBy)
             .LoadAsync(cancellationToken);

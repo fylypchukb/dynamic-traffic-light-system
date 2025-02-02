@@ -41,7 +41,7 @@ public record IntersectionResponseModel
     public DateTime LastUpdateTime { get; set; }
 
     /// <summary>
-    /// Indicates whether the intersection is currently active.
+    /// Indicates whether the intersection entity is currently active.
     /// </summary>
     public bool IsActive { get; set; } = true;
 }

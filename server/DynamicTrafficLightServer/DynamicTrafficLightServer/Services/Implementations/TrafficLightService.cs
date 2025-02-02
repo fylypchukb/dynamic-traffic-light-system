@@ -93,7 +93,7 @@ public class TrafficLightService(
         {
             var intersection =
                 await intersectionRepository.GetByIdAsync(trafficLightRequestModel.IntersectionId, cancellationToken);
-            
+
             if (intersection is null)
             {
                 return new ServiceResponse<TrafficLightResponseModel>

@@ -80,7 +80,7 @@ public class ConfigurationService(
         ConfigurationRequestModel configurationRequestModel, CancellationToken cancellationToken)
     {
         var configuration = await configurationRepository.GetByIdAsync(id, cancellationToken);
-        
+
         if (configuration is null)
         {
             return new ServiceResponse<ConfigurationResponseModel>
@@ -89,7 +89,7 @@ public class ConfigurationService(
                 ErrorMessage = "Configuration not found."
             };
         }
-        
+
         if (configurationRequestModel.TrafficLightId != configuration.TrafficLightId)
         {
             var trafficLight =
@@ -104,7 +104,7 @@ public class ConfigurationService(
                 };
             }
         }
-        
+
         configuration.TrafficLightId = configurationRequestModel.TrafficLightId;
         configuration.MinGreenTime = configurationRequestModel.MinGreenTime;
         configuration.MaxGreenTime = configurationRequestModel.MaxGreenTime;
@@ -113,12 +113,12 @@ public class ConfigurationService(
         configuration.DefaultGreenTime = configurationRequestModel.DefaultGreenTime;
         configuration.DefaultRedTime = configurationRequestModel.DefaultRedTime;
         configuration.IsActive = configurationRequestModel.IsActive;
-        
+
         configuration.LastUpdatedById = 1; // TODO: Get from user context.
         configuration.LastUpdateTime = DateTime.UtcNow;
-        
+
         await configurationRepository.UpdateAsync(configuration, cancellationToken);
-        
+
         return new ServiceResponse<ConfigurationResponseModel>
         {
             Result = ConfigurationMapper.ToResponseModel(configuration)
@@ -126,10 +126,11 @@ public class ConfigurationService(
     }
 
     /// <inheritdoc />
-    public async Task<ServiceResponse<ConfigurationResponseModel>> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<ServiceResponse<ConfigurationResponseModel>> DeleteAsync(int id,
+        CancellationToken cancellationToken)
     {
         var configuration = await configurationRepository.GetByIdAsync(id, cancellationToken);
-        
+
         if (configuration is null)
         {
             return new ServiceResponse<ConfigurationResponseModel>
@@ -138,9 +139,9 @@ public class ConfigurationService(
                 ErrorMessage = "Configuration not found."
             };
         }
-        
+
         await configurationRepository.DeleteAsync(configuration, cancellationToken);
-        
+
         return new ServiceResponse<ConfigurationResponseModel>();
     }
 }
