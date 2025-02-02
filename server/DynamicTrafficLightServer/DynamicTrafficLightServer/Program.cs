@@ -29,6 +29,7 @@ builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
 
 builder.Services.AddScoped<IIntersectionService, IntersectionService>();
 builder.Services.AddScoped<ITrafficLightService, TrafficLightService>();
+builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 
 var app = builder.Build();
 

@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DynamicTrafficLightServer.Controllers;
 
+/// <summary>
+/// Controller for managing traffic lights.
+/// </summary>
+/// <param name="trafficLightService">Service for handling traffic lights operations.</param>
 [ApiController]
 [Route("api/v1/[controller]")]
 public class TrafficLightController(ITrafficLightService trafficLightService) : ControllerBase

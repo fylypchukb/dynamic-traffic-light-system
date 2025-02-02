@@ -46,7 +46,7 @@ public record TrafficLightResponseModel
     public string LastUpdatedByName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Indicates whether the traffic light is active.
+    /// Indicates whether the traffic light entity is active.
     /// </summary>
     public bool IsActive { get; set; }
 }

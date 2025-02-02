@@ -16,7 +16,7 @@ public record IntersectionRequestModel
     public required string Location { get; set; }
 
     /// <summary>
-    /// Indicates whether the intersection is active.
+    /// Indicates whether the intersection entity is active.
     /// </summary>
     public bool IsActive { get; set; }
 }
