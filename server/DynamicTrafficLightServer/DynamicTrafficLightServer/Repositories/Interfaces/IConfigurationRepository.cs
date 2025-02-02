@@ -41,4 +41,13 @@ public interface IConfigurationRepository
     /// <param name="configuration">The configuration entity to delete.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     Task DeleteAsync(Configuration configuration, CancellationToken cancellationToken);
+
+    /// <summary>
+    ///     Retrieves a specific configuration by the traffic light ID.
+    ///     Results are not tracked by the DbContext.
+    /// </summary>
+    /// <param name="trafficLightId">The ID of the traffic light to retrieve the configuration for.</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>The configuration if found and active, otherwise null.</returns>
+    Task<Configuration?> GetByTrafficLightIdAsync(int trafficLightId, CancellationToken cancellationToken);
 }
