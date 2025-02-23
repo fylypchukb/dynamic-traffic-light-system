@@ -1,4 +1,5 @@
 using System.Reflection;
+using DynamicTrafficLightServer;
 using DynamicTrafficLightServer.Data;
 using DynamicTrafficLightServer.Repositories.Implementations;
 using DynamicTrafficLightServer.Repositories.Interfaces;
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<DataContext>(opt =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -47,5 +50,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<TrafficHub>("/trafficHub");
 
 app.Run();

@@ -60,6 +60,7 @@ public class ConfigurationRepository(DataContext context) : IConfigurationReposi
     {
         return context.Configurations
             .AsNoTracking()
+            .Include(c => c.TrafficLight)
             .FirstOrDefaultAsync(s => s.TrafficLightId == trafficLightId && s.IsActive, cancellationToken);
     }
 }

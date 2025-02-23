@@ -2,10 +2,12 @@
 using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Repositories.Interfaces;
 using DynamicTrafficLightServer.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DynamicTrafficLightServer.Services.Implementations;
 
-public class TrafficFlowService(IConfigurationRepository configurationRepository) : ITrafficFlowService
+public class TrafficFlowService(IConfigurationRepository configurationRepository, IHubContext<TrafficHub> trafficHub)
+    : ITrafficFlowService
 {
     /// <inheritdoc />
     public async Task<ServiceResponse<TrafficDataResponse>> CalculateGreenLightAsync(
@@ -50,13 +52,18 @@ public class TrafficFlowService(IConfigurationRepository configurationRepository
             greenLightDuration = configuration.MinGreenTime;
         }
 
+        var trafficDataResponse = new TrafficDataResponse
+        {
+            TrafficLightId = trafficDataRequest.TrafficLightId,
+            GreenLightDuration = greenLightDuration
+        };
+
+        await trafficHub.Clients.Group(configuration.TrafficLight!.IntersectionId.ToString())
+            .SendAsync("ReceiveTrafficLightUpdate", trafficDataResponse, cancellationToken);
+
         return new ServiceResponse<TrafficDataResponse>
         {
-            Result = new TrafficDataResponse
-            {
-                TrafficLightId = trafficDataRequest.TrafficLightId,
-                GreenLightDuration = greenLightDuration
-            }
+            Result = trafficDataResponse
         };
     }
 }
