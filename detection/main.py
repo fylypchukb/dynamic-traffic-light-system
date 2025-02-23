@@ -19,6 +19,7 @@ def main():
     camera_source = int(config.get("Settings", "camera_source"))
     traffic_light_id = config.get("Settings", "traffic_light_id")
     server_base_url = config.get("Connection", "server_base_url")
+    request_interval = float(config.get("Settings", "request_interval", fallback=5))
 
     if not traffic_light_id or not server_base_url or camera_source is None:
         raise ValueError("Camera source, traffic light ID and server base URL must be provided in the configuration.")
@@ -30,6 +31,7 @@ def main():
     cap = initialize_camera(camera_source)
 
     last_frame_time = 0
+    last_request_time = 0
 
     try:
         while cap.isOpened():
@@ -48,8 +50,9 @@ def main():
                     if show_frame:
                         display_frame(results)
 
-                    if detections:
+                    if detections and current_time - last_request_time >= request_interval:
                         notify_car_detected(server_base_url, traffic_light_id, len(detections))
+                        last_request_time = current_time
 
                     # Check for quit command
                     if cv2.waitKey(1) & 0xFF == ord("q"):
