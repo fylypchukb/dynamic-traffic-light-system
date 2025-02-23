@@ -58,8 +58,8 @@ public class TrafficFlowService(IConfigurationRepository configurationRepository
             GreenLightDuration = greenLightDuration
         };
 
-        await trafficHub.Clients.All.SendAsync("ReceiveTrafficLightUpdate", trafficDataResponse,
-            cancellationToken);
+        await trafficHub.Clients.Group(configuration.TrafficLight!.IntersectionId.ToString())
+            .SendAsync("ReceiveTrafficLightUpdate", trafficDataResponse, cancellationToken);
 
         return new ServiceResponse<TrafficDataResponse>
         {
