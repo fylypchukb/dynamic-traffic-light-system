@@ -1,5 +1,4 @@
-﻿using System.Net;
-using DynamicTrafficLightServer.Dtos;
+﻿using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Mappers;
 using DynamicTrafficLightServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +26,7 @@ public class IntersectionController(IIntersectionService intersectionService) : 
     {
         var result = await intersectionService.GetAllAsync(cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -61,9 +60,7 @@ public class IntersectionController(IIntersectionService intersectionService) : 
     {
         var result = await intersectionService.CreateAsync(intersectionRequestModel, cancellationToken);
 
-        return result.StatusCode == HttpStatusCode.Created
-            ? Created($"/api/v1/intersection/{result.Result!.Id}", result.ToApiResponse())
-            : StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToCreatedApiResponse("/api/v1/intersection");
     }
 
     /// <summary>
@@ -81,7 +78,7 @@ public class IntersectionController(IIntersectionService intersectionService) : 
     {
         var result = await intersectionService.UpdateAsync(id, intersectionRequestModel, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -95,6 +92,6 @@ public class IntersectionController(IIntersectionService intersectionService) : 
     {
         var result = await intersectionService.DeleteAsync(id, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 }

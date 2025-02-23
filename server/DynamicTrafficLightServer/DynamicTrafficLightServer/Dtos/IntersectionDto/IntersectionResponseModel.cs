@@ -3,13 +3,8 @@
 /// <summary>
 /// Represents the intersection details returned by the API.
 /// </summary>
-public record IntersectionResponseModel
+public record IntersectionResponseModel : BaseModelResponseDto
 {
-    /// <summary>
-    /// The unique identifier for the intersection.
-    /// </summary>
-    public int Id { get; set; }
-
     /// <summary>
     /// The name of the city where the intersection is located.
     /// </summary>
