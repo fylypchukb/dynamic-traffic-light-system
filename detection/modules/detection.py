@@ -17,7 +17,7 @@ def run_detection(model, frame, confidence):
     detections = []
     for result in results:
         for detection in result.boxes:
-            if detection.cls == 0 and detection.conf > confidence:
+            if detection.cls == 0 and detection.conf > confidence: # todo: change 2 for car
                 detections.append(detection)
                 print(f"Car detected with confidence: {detection.conf}")
     return results, detections

@@ -10,13 +10,13 @@ def notify_car_detected(base_url, traffic_light_id, cars_number):
     :return: None
     """
 
-    url = f"{base_url}/calculate-green-light"
+    url = f"{base_url}/trafficFlow/calculate-green-light"
     payload = {
         "trafficLightId": traffic_light_id,
         "carsNumber": cars_number
     }
     try:
-        response = requests.post(url, json=payload)
+        response = requests.post(url, json=payload, verify=False) # todo: remove verify=False
         response.raise_for_status()
         print("Notification sent successfully.")
     except requests.RequestException as e:

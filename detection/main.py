@@ -13,15 +13,15 @@ def main():
     config = load_config("config.ini")
 
     # Extract configuration parameters
-    camera_source = int(config.get("Settings", "camera_source", fallback=0))
     frame_interval = float(config.get("Settings", "frame_interval", fallback=1))
     show_frame = config.getboolean("Settings", "show_frame", fallback=False)
     detection_confidence = float(config.get("Settings", "detection_confidence", fallback=0.7))
+    camera_source = int(config.get("Settings", "camera_source"))
     traffic_light_id = config.get("Settings", "traffic_light_id")
     server_base_url = config.get("Connection", "server_base_url")
 
-    if not traffic_light_id or not server_base_url:
-        raise ValueError("Traffic light ID and server base URL must be provided in the configuration.")
+    if not traffic_light_id or not server_base_url or camera_source is None:
+        raise ValueError("Camera source, traffic light ID and server base URL must be provided in the configuration.")
 
     # Load the YOLO model
     model = YOLO(config.get("Settings", "model_path", fallback="yolo11s.pt"))
@@ -44,12 +44,12 @@ def main():
                     # Run YOLO detection
                     results, detections = run_detection(model, frame, detection_confidence)
 
-                    if detections:
-                        notify_car_detected(server_base_url, traffic_light_id, len(detections))
-
                     # Display frame if enabled
                     if show_frame:
                         display_frame(results)
+
+                    if detections:
+                        notify_car_detected(server_base_url, traffic_light_id, len(detections))
 
                     # Check for quit command
                     if cv2.waitKey(1) & 0xFF == ord("q"):
