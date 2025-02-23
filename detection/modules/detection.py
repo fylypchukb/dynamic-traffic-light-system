@@ -20,7 +20,7 @@ def run_detection(model, frame, confidence):
             if detection.cls == 0 and detection.conf > confidence:
                 detections.append(detection)
                 print(f"Car detected with confidence: {detection.conf}")
-    return results
+    return results, detections
 
 
 def display_frame(results):
