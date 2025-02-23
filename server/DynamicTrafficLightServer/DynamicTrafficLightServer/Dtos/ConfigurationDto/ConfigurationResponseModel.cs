@@ -3,13 +3,8 @@
 /// <summary>
 /// Represents a response model for traffic light configuration details.
 /// </summary>
-public record ConfigurationResponseModel
+public record ConfigurationResponseModel : BaseModelResponseDto
 {
-    /// <summary>
-    /// The unique identifier for the configuration.
-    /// </summary>
-    public int Id { get; set; }
-
     /// <summary>
     /// The unique identifier for the traffic light associated with this configuration.
     /// </summary>

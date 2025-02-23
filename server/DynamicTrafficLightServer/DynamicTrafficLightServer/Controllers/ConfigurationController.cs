@@ -24,7 +24,7 @@ public class ConfigurationController(IConfigurationService configurationService)
     {
         var result = await configurationService.GetAllAsync(cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public class ConfigurationController(IConfigurationService configurationService)
     {
         var result = await configurationService.GetByIdAsync(id, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class ConfigurationController(IConfigurationService configurationService)
     {
         var result = await configurationService.CreateAsync(configurationRequestModel, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToCreatedApiResponse("/api/v1/configuration");
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class ConfigurationController(IConfigurationService configurationService)
     {
         var result = await configurationService.UpdateAsync(id, configurationRequestModel, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -85,6 +85,6 @@ public class ConfigurationController(IConfigurationService configurationService)
     {
         var result = await configurationService.DeleteAsync(id, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 }

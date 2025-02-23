@@ -3,13 +3,8 @@
 /// <summary>
 /// Response model representing a traffic light in the API.
 /// </summary>
-public record TrafficLightResponseModel
+public record TrafficLightResponseModel : BaseModelResponseDto
 {
-    /// <summary>
-    /// The unique identifier of the traffic light.
-    /// </summary>
-    public int Id { get; set; }
-
     /// <summary>
     /// The name of the traffic light.
     /// </summary>

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using DynamicTrafficLightServer.Dtos;
+﻿using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Mappers;
 using DynamicTrafficLightServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +26,7 @@ public class TrafficLightController(ITrafficLightService trafficLightService) : 
     {
         var result = await trafficLightService.GetAllAsync(cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -44,7 +43,7 @@ public class TrafficLightController(ITrafficLightService trafficLightService) : 
     {
         var result = await trafficLightService.GetByIdAsync(id, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -61,9 +60,7 @@ public class TrafficLightController(ITrafficLightService trafficLightService) : 
     {
         var result = await trafficLightService.CreateAsync(trafficLightRequestModel, cancellationToken);
 
-        return result.StatusCode == HttpStatusCode.Created
-            ? Created($"/api/v1/trafficLight/{result.Result!.Id}", result.ToApiResponse())
-            : StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToCreatedApiResponse("/api/v1/trafficLight");
     }
 
     /// <summary>
@@ -81,7 +78,7 @@ public class TrafficLightController(ITrafficLightService trafficLightService) : 
     {
         var result = await trafficLightService.UpdateAsync(id, trafficLightRequestModel, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
@@ -95,6 +92,6 @@ public class TrafficLightController(ITrafficLightService trafficLightService) : 
     {
         var result = await trafficLightService.DeleteAsync(id, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 }

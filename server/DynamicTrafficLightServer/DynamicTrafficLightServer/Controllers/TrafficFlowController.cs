@@ -26,6 +26,6 @@ public class TrafficFlowController(ITrafficFlowService trafficFlowService) : Con
     {
         var result = await trafficFlowService.CalculateGreenLightAsync(trafficDataRequest, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 }
