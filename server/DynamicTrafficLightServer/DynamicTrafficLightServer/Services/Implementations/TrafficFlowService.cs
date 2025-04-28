@@ -55,7 +55,9 @@ public class TrafficFlowService(IConfigurationRepository configurationRepository
         var trafficDataResponse = new TrafficDataResponse
         {
             TrafficLightId = trafficDataRequest.TrafficLightId,
-            GreenLightDuration = greenLightDuration
+            GreenLightDuration = greenLightDuration,
+            CorrelationId = trafficDataRequest.CorrelationId,
+            DetectionTime = trafficDataRequest.DetectionTime
         };
 
         await trafficHub.Clients.Group(configuration.TrafficLight!.IntersectionId.ToString())

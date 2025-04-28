@@ -1,7 +1,7 @@
 ﻿import cv2
 import time
 from ultralytics import YOLO
-from modules import initialize_camera, load_config, capture_frame, run_detection, display_frame, notify_car_detected
+from modules import initialize_camera, load_config, capture_frame, run_detection, display_frame, notify_car_detected, init_signalr
 
 
 def main():
@@ -17,15 +17,19 @@ def main():
     show_frame = config.getboolean("Settings", "show_frame", fallback=False)
     detection_confidence = float(config.get("Settings", "detection_confidence", fallback=0.7))
     camera_source = int(config.get("Settings", "camera_source"))
-    traffic_light_id = config.get("Settings", "traffic_light_id")
-    server_base_url = config.get("Connection", "server_base_url")
+    traffic_light_id = int(config.get("Settings", "traffic_light_id"))
+    intersection_id = config.get("Settings", "intersection_id")
     request_interval = float(config.get("Settings", "request_interval", fallback=5))
+    server_base_url = config.get("Connection", "server_base_url")
+    signalr_url = config.get("Connection", "signalr_url")
 
     if not traffic_light_id or not server_base_url or camera_source is None:
         raise ValueError("Camera source, traffic light ID and server base URL must be provided in the configuration.")
 
     # Load the YOLO model
     model = YOLO(config.get("Settings", "model_path", fallback="yolo11s.pt"))
+
+    init_signalr(signalr_url, intersection_id)
 
     # Initialize camera
     cap = initialize_camera(camera_source)
