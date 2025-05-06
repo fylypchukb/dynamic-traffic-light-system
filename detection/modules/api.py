@@ -16,13 +16,24 @@ signalr_client = None
 
 
 class SignalRClient:
+    """
+    A client wrapper for SignalR WebSocket connections.
+
+    Handles connection setup, message sending, and background listening
+    for incoming messages from the SignalR hub.
+    """
+
     def __init__(self, hub_url: str):
-        # Full WebSocket URL with query params, e.g.: "wss://server/hubs/trafficHub?intersectionId=4"
         self.hub_url = hub_url.rstrip('/')
         self.ws = None
         self.connected = False
 
     def connect(self):
+        """
+        Establish a WebSocket connection to the SignalR hub and send the initial handshake.
+
+        Also starts a background thread to listen for incoming messages.
+        """
         self.ws = create_connection(
             self.hub_url,
             sslopt={
@@ -41,6 +52,11 @@ class SignalRClient:
         threading.Thread(target=self._listen, daemon=True).start()
 
     def _listen(self):
+        """
+        Internal method that continuously listens for messages from the server.
+
+        Runs in a separate thread. If a connection error occurs, sets `connected` to False.
+        """
         while self.connected:
             try:
                 msg = self.ws.recv()
@@ -49,6 +65,13 @@ class SignalRClient:
                 self.connected = False
 
     def send(self, method: str, args: list):
+        """
+        Send a message to the SignalR hub with the given method name and arguments.
+
+        :param method: The method name (target) defined on the SignalR hub.
+        :param args: List of arguments to send with the invocation.
+        :raises RuntimeError: If the WebSocket is not connected.
+        """
         if not self.connected:
             raise RuntimeError("SignalR socket is not connected")
         invocation = {
@@ -60,14 +83,20 @@ class SignalRClient:
         self.ws.send(message.encode("utf-8"))
 
     def is_connected(self) -> bool:
+        """
+        Check if the SignalR WebSocket connection is currently active.
+
+        :return: True if connected, False otherwise.
+        """
         return self.connected
 
 
 def init_signalr(base_signalr_url: str, intersection_id: str):
     """
     Initialize and start the SignalR WebSocket connection.
-    :param base_signalr_url: Base WS(S) URL of your SignalR hub, e.g. "wss://server/hubs"
-    :param intersection_id: Intersection identifier to append as query parameter.
+
+    :param base_signalr_url: Base WebSocket URL of the SignalR hub, e.g., "wss://server/hubs".
+    :param intersection_id: Unique identifier of the intersection to include as a query parameter.
     """
     global signalr_client
 
@@ -79,12 +108,13 @@ def init_signalr(base_signalr_url: str, intersection_id: str):
 
 def notify_car_detected(base_url: str, traffic_light_id: int, cars_number: int):
     """
-    Notify the server about the number of cars detected.
-    Uses SignalR WebSocket if connected, otherwise falls back to HTTP.
+    Notify the server of the number of detected cars at a traffic light.
 
-    :param base_url: Base URL of the HTTP endpoint (http(s)://server)
-    :param traffic_light_id: Identifier of the traffic light
-    :param cars_number: Number of cars detected
+    Sends data via SignalR WebSocket if connected, otherwise falls back to HTTP POST.
+
+    :param base_url: Base URL of the server, used for HTTP fallback.
+    :param traffic_light_id: ID of the traffic light where detection occurred.
+    :param cars_number: Number of cars detected at that traffic light.
     """
     correlation_id = str(uuid.uuid4())
     detection_time = datetime.now(timezone.utc).isoformat()
