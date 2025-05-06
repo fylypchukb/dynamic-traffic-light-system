@@ -11,6 +11,16 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocal", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<DataContext>(opt =>
     opt.UseSqlServer(new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
@@ -44,6 +54,8 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference(opt => { opt.HideClientButton = true; });
 }
+
+app.UseCors("AllowLocal");
 
 app.UseHttpsRedirection();
 
