@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DynamicTrafficLightServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241229184725_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250506175435_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,6 +80,38 @@ namespace DynamicTrafficLightServer.Migrations
                     b.ToTable("Configurations");
                 });
 
+            modelBuilder.Entity("DynamicTrafficLightServer.Models.EntityChangeLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChangedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedById");
+
+                    b.ToTable("EntityChangeLogs");
+                });
+
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Intersection", b =>
                 {
                     b.Property<int>("Id")
@@ -120,24 +152,6 @@ namespace DynamicTrafficLightServer.Migrations
                     b.HasIndex("LastUpdatedById");
 
                     b.ToTable("Intersections");
-                });
-
-            modelBuilder.Entity("DynamicTrafficLightServer.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.TrafficLight", b =>
@@ -185,6 +199,38 @@ namespace DynamicTrafficLightServer.Migrations
                     b.ToTable("TrafficLights");
                 });
 
+            modelBuilder.Entity("DynamicTrafficLightServer.Models.TrafficSwitchLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GreenLightDurationSeconds")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InitById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TrafficLightId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InitById");
+
+                    b.HasIndex("TrafficLightId");
+
+                    b.ToTable("TrafficSwitchLogs");
+                });
+
             modelBuilder.Entity("DynamicTrafficLightServer.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -203,17 +249,20 @@ namespace DynamicTrafficLightServer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthIdentityId")
                         .IsUnique();
 
-                    b.HasIndex("RoleId");
-
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AuthIdentityId = "system",
+                            Name = "System"
+                        });
                 });
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Configuration", b =>
@@ -241,6 +290,17 @@ namespace DynamicTrafficLightServer.Migrations
                     b.Navigation("LastUpdatedBy");
 
                     b.Navigation("TrafficLight");
+                });
+
+            modelBuilder.Entity("DynamicTrafficLightServer.Models.EntityChangeLog", b =>
+                {
+                    b.HasOne("DynamicTrafficLightServer.Models.User", "ChangedBy")
+                        .WithMany("EntityChangeLogs")
+                        .HasForeignKey("ChangedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ChangedBy");
                 });
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Intersection", b =>
@@ -289,15 +349,23 @@ namespace DynamicTrafficLightServer.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("DynamicTrafficLightServer.Models.User", b =>
+            modelBuilder.Entity("DynamicTrafficLightServer.Models.TrafficSwitchLog", b =>
                 {
-                    b.HasOne("DynamicTrafficLightServer.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("DynamicTrafficLightServer.Models.User", "InitBy")
+                        .WithMany("TrafficSwitchLogs")
+                        .HasForeignKey("InitById")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.HasOne("DynamicTrafficLightServer.Models.TrafficLight", "TrafficLight")
+                        .WithMany("TrafficSwitchLogs")
+                        .HasForeignKey("TrafficLightId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("InitBy");
+
+                    b.Navigation("TrafficLight");
                 });
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.Intersection", b =>
@@ -305,14 +373,11 @@ namespace DynamicTrafficLightServer.Migrations
                     b.Navigation("TrafficLights");
                 });
 
-            modelBuilder.Entity("DynamicTrafficLightServer.Models.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("DynamicTrafficLightServer.Models.TrafficLight", b =>
                 {
                     b.Navigation("Configurations");
+
+                    b.Navigation("TrafficSwitchLogs");
                 });
 
             modelBuilder.Entity("DynamicTrafficLightServer.Models.User", b =>
@@ -323,11 +388,15 @@ namespace DynamicTrafficLightServer.Migrations
 
                     b.Navigation("CreatedTrafficLights");
 
+                    b.Navigation("EntityChangeLogs");
+
                     b.Navigation("LastUpdateConfigurations");
 
                     b.Navigation("LastUpdatedIntersections");
 
                     b.Navigation("LastUpdatedTrafficLights");
+
+                    b.Navigation("TrafficSwitchLogs");
                 });
 #pragma warning restore 612, 618
         }

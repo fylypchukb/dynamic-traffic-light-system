@@ -18,4 +18,5 @@ public class TrafficLight
     public List<Configuration>? Configurations { get; set; }
     public User? CreatedBy { get; set; }
     public User? LastUpdatedBy { get; set; }
+    public List<TrafficSwitchLog>? TrafficSwitchLogs { get; set; }
 }

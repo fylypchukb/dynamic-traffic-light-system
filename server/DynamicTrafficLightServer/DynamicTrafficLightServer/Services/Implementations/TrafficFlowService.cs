@@ -1,12 +1,16 @@
 ﻿using System.Net;
 using DynamicTrafficLightServer.Dtos;
+using DynamicTrafficLightServer.Models;
 using DynamicTrafficLightServer.Repositories.Interfaces;
 using DynamicTrafficLightServer.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DynamicTrafficLightServer.Services.Implementations;
 
-public class TrafficFlowService(IConfigurationRepository configurationRepository, IHubContext<TrafficHub> trafficHub)
+public class TrafficFlowService(
+    IConfigurationRepository configurationRepository,
+    IHubContext<TrafficHub> trafficHub,
+    ITrafficSwitchLogRepository trafficSwitchLogRepository)
     : ITrafficFlowService
 {
     /// <inheritdoc />
@@ -62,6 +66,15 @@ public class TrafficFlowService(IConfigurationRepository configurationRepository
 
         await trafficHub.Clients.Group(configuration.TrafficLight!.IntersectionId.ToString())
             .SendAsync("ReceiveTrafficLightUpdate", trafficDataResponse, cancellationToken);
+
+        await trafficSwitchLogRepository.AddAsync(new TrafficSwitchLog
+        {
+            TrafficLightId = trafficDataResponse.TrafficLightId,
+            VehicleCount = trafficDataRequest.CarsNumber,
+            GreenLightDurationSeconds = trafficDataResponse.GreenLightDuration,
+            InitById = 1, // TODO: Get from elsewhere.
+            Timestamp = trafficDataRequest.DetectionTime.ToUniversalTime()
+        }, cancellationToken);
 
         return new ServiceResponse<TrafficDataResponse>
         {

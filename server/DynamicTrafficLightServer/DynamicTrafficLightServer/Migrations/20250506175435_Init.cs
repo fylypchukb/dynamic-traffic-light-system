@@ -6,24 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DynamicTrafficLightServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -31,18 +18,33 @@ namespace DynamicTrafficLightServer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    AuthIdentityId = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    AuthIdentityId = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EntityChangeLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EntityName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EntityId = table.Column<int>(type: "int", nullable: false),
+                    Action = table.Column<int>(type: "int", nullable: false),
+                    ChangedById = table.Column<int>(type: "int", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EntityChangeLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_EntityChangeLogs_Users_ChangedById",
+                        column: x => x.ChangedById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -150,6 +152,38 @@ namespace DynamicTrafficLightServer.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TrafficSwitchLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TrafficLightId = table.Column<int>(type: "int", nullable: false),
+                    VehicleCount = table.Column<int>(type: "int", nullable: false),
+                    GreenLightDurationSeconds = table.Column<int>(type: "int", nullable: false),
+                    InitById = table.Column<int>(type: "int", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrafficSwitchLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrafficSwitchLogs_TrafficLights_TrafficLightId",
+                        column: x => x.TrafficLightId,
+                        principalTable: "TrafficLights",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TrafficSwitchLogs_Users_InitById",
+                        column: x => x.InitById,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "AuthIdentityId", "Name" },
+                values: new object[] { 1, "system", "System" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Configurations_CreatedById",
                 table: "Configurations",
@@ -164,6 +198,11 @@ namespace DynamicTrafficLightServer.Migrations
                 name: "IX_Configurations_TrafficLightId",
                 table: "Configurations",
                 column: "TrafficLightId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityChangeLogs_ChangedById",
+                table: "EntityChangeLogs",
+                column: "ChangedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Intersections_CreatedById",
@@ -191,15 +230,20 @@ namespace DynamicTrafficLightServer.Migrations
                 column: "LastUpdatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrafficSwitchLogs_InitById",
+                table: "TrafficSwitchLogs",
+                column: "InitById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrafficSwitchLogs_TrafficLightId",
+                table: "TrafficSwitchLogs",
+                column: "TrafficLightId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_AuthIdentityId",
                 table: "Users",
                 column: "AuthIdentityId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
-                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -209,6 +253,12 @@ namespace DynamicTrafficLightServer.Migrations
                 name: "Configurations");
 
             migrationBuilder.DropTable(
+                name: "EntityChangeLogs");
+
+            migrationBuilder.DropTable(
+                name: "TrafficSwitchLogs");
+
+            migrationBuilder.DropTable(
                 name: "TrafficLights");
 
             migrationBuilder.DropTable(
@@ -216,9 +266,6 @@ namespace DynamicTrafficLightServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
         }
     }
 }
