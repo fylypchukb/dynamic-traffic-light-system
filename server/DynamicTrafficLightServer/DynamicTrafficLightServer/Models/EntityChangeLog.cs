@@ -6,7 +6,7 @@ namespace DynamicTrafficLightServer.Models;
 public class EntityChangeLog
 {
     public int Id { get; set; }
-    [MaxLength(50)] public string EntityName { get; set; } = string.Empty;
+    [MaxLength(50)] public required string EntityName { get; set; }
     public int EntityId { get; set; }
     public EntityChangeAction Action { get; set; }
     public int ChangedById { get; set; }

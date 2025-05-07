@@ -13,7 +13,6 @@ public class TrafficSwitchLogRepository(DataContext context) : ITrafficSwitchLog
         return await context.TrafficSwitchLogs
             .AsNoTracking()
             .Include(l => l.InitBy)
-            .Include(l => l.TrafficLight)
             .ToListAsync(cancellationToken);
     }
 
