@@ -1,15 +1,18 @@
-﻿using DynamicTrafficLightServer.Models;
+﻿using DynamicTrafficLightServer.Dtos.EntityChangeLogDto;
+using DynamicTrafficLightServer.Models;
 
 namespace DynamicTrafficLightServer.Repositories.Interfaces;
 
 public interface IEntityChangeLogRepository
 {
     /// <summary>
-    /// Retrieves all entity change logs from the database.
+    /// Retrieves a filtered list of <see cref="EntityChangeLog"/> entries based on the specified filter criteria.
     /// </summary>
-    /// <param name="cancellationToken">Optional cancellation token.</param>
-    /// <returns>A list of all <see cref="EntityChangeLog"/> entries.</returns>
-    Task<List<EntityChangeLog>> GetAllAsync(CancellationToken cancellationToken);
+    /// <param name="filter">The filter object containing criteria.</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>A list of matching <see cref="EntityChangeLog"/> records.</returns>
+    Task<List<EntityChangeLog>> GetFilteredAsync(EntityChangeLogFilterRequestModel filter,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves a specific entity change log by its ID.

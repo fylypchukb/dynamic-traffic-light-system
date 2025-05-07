@@ -49,6 +49,8 @@ builder.Services.AddScoped<ITrafficFlowService, TrafficFlowService>();
 builder.Services.AddScoped<IEntityChangeLogRepository, EntityChangeLogRepository>();
 builder.Services.AddScoped<ITrafficSwitchLogRepository, TrafficSwitchLogRepository>();
 
+builder.Services.AddScoped<ILogsService, LogsService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

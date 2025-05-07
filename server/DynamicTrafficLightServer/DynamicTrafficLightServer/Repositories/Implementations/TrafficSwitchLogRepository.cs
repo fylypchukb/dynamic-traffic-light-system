@@ -1,4 +1,6 @@
 ﻿using DynamicTrafficLightServer.Data;
+using DynamicTrafficLightServer.Dtos.TrafficSwitchLogDto;
+using DynamicTrafficLightServer.Extensions;
 using DynamicTrafficLightServer.Models;
 using DynamicTrafficLightServer.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,16 +10,25 @@ namespace DynamicTrafficLightServer.Repositories.Implementations;
 public class TrafficSwitchLogRepository(DataContext context) : ITrafficSwitchLogRepository
 {
     /// <inheritdoc />
-    public async Task<List<TrafficSwitchLog>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<List<TrafficSwitchLog>> GetFilteredAsync(TrafficSwitchLogFilterRequestModel filter,
+        CancellationToken cancellationToken)
     {
-        return await context.TrafficSwitchLogs
+        var query = context.TrafficSwitchLogs
             .AsNoTracking()
-            .Include(l => l.InitBy)
-            .ToListAsync(cancellationToken);
+            .Include(x => x.InitBy)
+            .Include(x => x.TrafficLight)
+            .AsQueryable();
+
+        query = query
+            .WhereIf(filter.TrafficLightId.HasValue, x => x.TrafficLightId == filter.TrafficLightId)
+            .WhereIf(filter.From.HasValue, x => x.Timestamp >= filter.From)
+            .WhereIf(filter.To.HasValue, x => x.Timestamp <= filter.To);
+
+        return await query.ToListAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<TrafficSwitchLog?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<TrafficSwitchLog?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await context.TrafficSwitchLogs
             .Include(l => l.InitBy)
@@ -26,7 +37,7 @@ public class TrafficSwitchLogRepository(DataContext context) : ITrafficSwitchLog
     }
 
     /// <inheritdoc />
-    public async Task AddAsync(TrafficSwitchLog log, CancellationToken cancellationToken = default)
+    public async Task AddAsync(TrafficSwitchLog log, CancellationToken cancellationToken)
     {
         await context.TrafficSwitchLogs.AddAsync(log, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
