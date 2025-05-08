@@ -11,6 +11,11 @@ public record ConfigurationResponseModel : BaseModelResponseDto
     public int TrafficLightId { get; set; }
 
     /// <summary>
+    /// The traffic light's name
+    /// </summary>
+    public string TrafficLightName { get; set; } = string.Empty;
+
+    /// <summary>
     /// The minimum duration (in seconds) that the green light should stay on.
     /// </summary>
     public int MinGreenTime { get; set; }
