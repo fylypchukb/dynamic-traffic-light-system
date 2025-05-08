@@ -8,13 +8,16 @@ namespace DynamicTrafficLightServer.Data;
 public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
 {
     public DbSet<User> Users => Set<User>();
-    public DbSet<Role> Roles => Set<Role>();
     public DbSet<Intersection> Intersections => Set<Intersection>();
     public DbSet<TrafficLight> TrafficLights => Set<TrafficLight>();
     public DbSet<Configuration> Configurations => Set<Configuration>();
+    public DbSet<EntityChangeLog> EntityChangeLogs => Set<EntityChangeLog>();
+    public DbSet<TrafficSwitchLog> TrafficSwitchLogs => Set<TrafficSwitchLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<User>()
             .HasIndex(u => u.AuthIdentityId)
             .IsUnique();
@@ -61,5 +64,30 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 v => JsonConvert.SerializeObject(v),
                 v => JsonConvert.DeserializeObject<Dictionary<int, int>>(v))
             .Metadata.SetValueComparer(new ValueComparer<Dictionary<int, int>>(false));
+
+        modelBuilder.Entity<EntityChangeLog>()
+            .HasOne(t => t.ChangedBy)
+            .WithMany(u => u.EntityChangeLogs)
+            .HasForeignKey(k => k.ChangedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TrafficSwitchLog>()
+            .HasOne(l => l.InitBy)
+            .WithMany(u => u.TrafficSwitchLogs)
+            .HasForeignKey(k => k.InitById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TrafficSwitchLog>()
+            .HasOne(l => l.TrafficLight)
+            .WithMany(t => t.TrafficSwitchLogs)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<User>()
+            .HasData(new User
+            {
+                Id = 1,
+                Name = "System",
+                AuthIdentityId = "system"
+            });
     }
 }

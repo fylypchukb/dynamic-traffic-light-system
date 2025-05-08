@@ -8,7 +8,7 @@ namespace DynamicTrafficLightServer.Repositories.Implementations;
 public class IntersectionRepository(DataContext context) : IIntersectionRepository
 {
     /// <inheritdoc />
-    public async Task<List<Intersection>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<List<Intersection>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await context.Intersections
             .AsNoTracking()
@@ -18,7 +18,7 @@ public class IntersectionRepository(DataContext context) : IIntersectionReposito
     }
 
     /// <inheritdoc />
-    public async Task<Intersection?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Intersection?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await context.Intersections
             .Include(i => i.CreatedBy)
@@ -27,7 +27,7 @@ public class IntersectionRepository(DataContext context) : IIntersectionReposito
     }
 
     /// <inheritdoc />
-    public async Task AddAsync(Intersection intersection, CancellationToken cancellationToken = default)
+    public async Task AddAsync(Intersection intersection, CancellationToken cancellationToken)
     {
         await context.Intersections.AddAsync(intersection, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
@@ -42,14 +42,14 @@ public class IntersectionRepository(DataContext context) : IIntersectionReposito
     }
 
     /// <inheritdoc />
-    public async Task UpdateAsync(Intersection intersection, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Intersection intersection, CancellationToken cancellationToken)
     {
         context.Intersections.Update(intersection);
         await context.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task DeleteAsync(Intersection intersection, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Intersection intersection, CancellationToken cancellationToken)
     {
         context.Intersections.Remove(intersection);
         await context.SaveChangesAsync(cancellationToken);

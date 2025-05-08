@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using DynamicTrafficLightServer.Dtos;
+using DynamicTrafficLightServer.Enums;
 using DynamicTrafficLightServer.Mappers;
+using DynamicTrafficLightServer.Models;
 using DynamicTrafficLightServer.Repositories.Interfaces;
 using DynamicTrafficLightServer.Services.Interfaces;
 
@@ -8,7 +10,8 @@ namespace DynamicTrafficLightServer.Services.Implementations;
 
 public class ConfigurationService(
     IConfigurationRepository configurationRepository,
-    ITrafficLightRepository trafficLightRepository) : IConfigurationService
+    ITrafficLightRepository trafficLightRepository,
+    IEntityChangeLogRepository changeLogRepository) : IConfigurationService
 {
     /// <inheritdoc />
     public async Task<ServiceResponse<List<ConfigurationResponseModel>>> GetAllAsync(
@@ -68,6 +71,15 @@ public class ConfigurationService(
 
         await configurationRepository.AddAsync(configuration, cancellationToken);
 
+        await changeLogRepository.AddAsync(new EntityChangeLog
+        {
+            EntityName = nameof(Configuration),
+            EntityId = configuration.Id,
+            Action = EntityChangeAction.Created,
+            ChangedById = 1, // TODO: Get from user context.
+            Timestamp = DateTime.UtcNow
+        }, cancellationToken);
+
         return new ServiceResponse<ConfigurationResponseModel>
         {
             StatusCode = HttpStatusCode.Created,
@@ -119,6 +131,15 @@ public class ConfigurationService(
 
         await configurationRepository.UpdateAsync(configuration, cancellationToken);
 
+        await changeLogRepository.AddAsync(new EntityChangeLog
+        {
+            EntityName = nameof(Configuration),
+            EntityId = configuration.Id,
+            Action = EntityChangeAction.Updated,
+            ChangedById = 1, // TODO: Get from user context.
+            Timestamp = DateTime.UtcNow
+        }, cancellationToken);
+
         return new ServiceResponse<ConfigurationResponseModel>
         {
             Result = ConfigurationMapper.ToResponseModel(configuration)
@@ -141,6 +162,15 @@ public class ConfigurationService(
         }
 
         await configurationRepository.DeleteAsync(configuration, cancellationToken);
+
+        await changeLogRepository.AddAsync(new EntityChangeLog
+        {
+            EntityName = nameof(Configuration),
+            EntityId = configuration.Id,
+            Action = EntityChangeAction.Deleted,
+            ChangedById = 1, // TODO: Get from user context.
+            Timestamp = DateTime.UtcNow
+        }, cancellationToken);
 
         return new ServiceResponse<ConfigurationResponseModel>();
     }
