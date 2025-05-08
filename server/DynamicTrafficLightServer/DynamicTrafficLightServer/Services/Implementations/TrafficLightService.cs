@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using DynamicTrafficLightServer.Dtos;
+using DynamicTrafficLightServer.Enums;
 using DynamicTrafficLightServer.Mappers;
+using DynamicTrafficLightServer.Models;
 using DynamicTrafficLightServer.Repositories.Interfaces;
 using DynamicTrafficLightServer.Services.Interfaces;
 
@@ -8,7 +10,8 @@ namespace DynamicTrafficLightServer.Services.Implementations;
 
 public class TrafficLightService(
     ITrafficLightRepository trafficLightRepository,
-    IIntersectionRepository intersectionRepository) : ITrafficLightService
+    IIntersectionRepository intersectionRepository,
+    IEntityChangeLogRepository changeLogRepository) : ITrafficLightService
 {
     /// <inheritdoc />
     public async Task<ServiceResponse<List<TrafficLightResponseModel>>> GetAllAsync(CancellationToken cancellationToken)
@@ -67,6 +70,15 @@ public class TrafficLightService(
 
         await trafficLightRepository.AddAsync(trafficLight, cancellationToken);
 
+        await changeLogRepository.AddAsync(new EntityChangeLog
+        {
+            EntityName = nameof(TrafficLight),
+            EntityId = trafficLight.Id,
+            Action = EntityChangeAction.Created,
+            ChangedById = 1, // TODO: Get from user context.
+            Timestamp = DateTime.UtcNow
+        }, cancellationToken);
+
         return new ServiceResponse<TrafficLightResponseModel>
         {
             StatusCode = HttpStatusCode.Created,
@@ -113,6 +125,15 @@ public class TrafficLightService(
 
         await trafficLightRepository.UpdateAsync(trafficLight, cancellationToken);
 
+        await changeLogRepository.AddAsync(new EntityChangeLog
+        {
+            EntityName = nameof(TrafficLight),
+            EntityId = trafficLight.Id,
+            Action = EntityChangeAction.Updated,
+            ChangedById = 1, // TODO: Get from user context.
+            Timestamp = DateTime.UtcNow
+        }, cancellationToken);
+
         return new ServiceResponse<TrafficLightResponseModel>
         {
             Result = TrafficLightMapper.ToResponseModel(trafficLight)
@@ -135,6 +156,15 @@ public class TrafficLightService(
         }
 
         await trafficLightRepository.DeleteAsync(trafficLight, cancellationToken);
+
+        await changeLogRepository.AddAsync(new EntityChangeLog
+        {
+            EntityName = nameof(TrafficLight),
+            EntityId = trafficLight.Id,
+            Action = EntityChangeAction.Deleted,
+            ChangedById = 1, // TODO: Get from user context.
+            Timestamp = DateTime.UtcNow
+        }, cancellationToken);
 
         return new ServiceResponse<TrafficLightResponseModel>();
     }
