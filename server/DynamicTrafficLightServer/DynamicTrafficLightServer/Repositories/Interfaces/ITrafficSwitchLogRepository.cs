@@ -1,4 +1,4 @@
-﻿using DynamicTrafficLightServer.Dtos.TrafficSwitchLogDto;
+﻿using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Models;
 
 namespace DynamicTrafficLightServer.Repositories.Interfaces;
@@ -11,7 +11,7 @@ public interface ITrafficSwitchLogRepository
     /// <param name="filter">The filter parameters, including traffic light ID and timestamp range.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>A list of matching <see cref="TrafficSwitchLog"/> records.</returns>
-    Task<List<TrafficSwitchLog>> GetFilteredAsync(TrafficSwitchLogFilterRequestModel filter,
+    Task<List<TrafficSwitchLog>> GetFilteredAsync(TrafficSwitchLogFilterModel filter,
         CancellationToken cancellationToken);
 
     /// <summary>

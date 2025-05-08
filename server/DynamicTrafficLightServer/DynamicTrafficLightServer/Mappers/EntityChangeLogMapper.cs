@@ -1,4 +1,4 @@
-﻿using DynamicTrafficLightServer.Dtos.EntityChangeLogDto;
+﻿using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Models;
 using Riok.Mapperly.Abstractions;
 

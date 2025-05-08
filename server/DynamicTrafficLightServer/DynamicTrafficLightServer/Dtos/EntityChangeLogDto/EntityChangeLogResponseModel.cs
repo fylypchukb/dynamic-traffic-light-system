@@ -1,6 +1,6 @@
 ﻿using DynamicTrafficLightServer.Enums;
 
-namespace DynamicTrafficLightServer.Dtos.EntityChangeLogDto;
+namespace DynamicTrafficLightServer.Dtos;
 
 /// <summary>
 /// Represents a log of changes made to an entity.

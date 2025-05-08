@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using DynamicTrafficLightServer;
 using DynamicTrafficLightServer.Data;
 using DynamicTrafficLightServer.Repositories.Implementations;
@@ -24,7 +25,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<DataContext>(opt =>
     opt.UseSqlServer(new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opt => { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSignalR();
@@ -34,6 +37,7 @@ builder.Services.AddSwaggerGen(opt =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     opt.IncludeXmlComments(xmlPath, true);
+    opt.UseInlineDefinitionsForEnums();
 });
 
 builder.Services.AddScoped<IIntersectionRepository, IntersectionRepository>();

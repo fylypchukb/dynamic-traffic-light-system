@@ -1,5 +1,5 @@
 ﻿using DynamicTrafficLightServer.Data;
-using DynamicTrafficLightServer.Dtos.TrafficSwitchLogDto;
+using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Extensions;
 using DynamicTrafficLightServer.Models;
 using DynamicTrafficLightServer.Repositories.Interfaces;
@@ -10,7 +10,7 @@ namespace DynamicTrafficLightServer.Repositories.Implementations;
 public class TrafficSwitchLogRepository(DataContext context) : ITrafficSwitchLogRepository
 {
     /// <inheritdoc />
-    public async Task<List<TrafficSwitchLog>> GetFilteredAsync(TrafficSwitchLogFilterRequestModel filter,
+    public async Task<List<TrafficSwitchLog>> GetFilteredAsync(TrafficSwitchLogFilterModel filter,
         CancellationToken cancellationToken)
     {
         var query = context.TrafficSwitchLogs

@@ -1,5 +1,5 @@
 ﻿using DynamicTrafficLightServer.Data;
-using DynamicTrafficLightServer.Dtos.EntityChangeLogDto;
+using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Extensions;
 using DynamicTrafficLightServer.Models;
 using DynamicTrafficLightServer.Repositories.Interfaces;
@@ -10,7 +10,7 @@ namespace DynamicTrafficLightServer.Repositories.Implementations;
 public class EntityChangeLogRepository(DataContext context) : IEntityChangeLogRepository
 {
     /// <inheritdoc />
-    public async Task<List<EntityChangeLog>> GetFilteredAsync(EntityChangeLogFilterRequestModel filter,
+    public async Task<List<EntityChangeLog>> GetFilteredAsync(EntityChangeLogFilterModel filter,
         CancellationToken cancellationToken)
     {
         var query = context.EntityChangeLogs
@@ -18,7 +18,7 @@ public class EntityChangeLogRepository(DataContext context) : IEntityChangeLogRe
             .Include(e => e.ChangedBy)
             .AsQueryable();
 
-        query
+        query = query
             .WhereIf(!string.IsNullOrWhiteSpace(filter.EntityName), e => e.EntityName == filter.EntityName)
             .WhereIf(filter.EntityId.HasValue, e => e.EntityId == filter.EntityId)
             .WhereIf(filter.Action.HasValue, e => e.Action == filter.Action)

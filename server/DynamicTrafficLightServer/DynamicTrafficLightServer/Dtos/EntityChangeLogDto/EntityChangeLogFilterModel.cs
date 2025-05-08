@@ -1,11 +1,11 @@
 ﻿using DynamicTrafficLightServer.Enums;
 
-namespace DynamicTrafficLightServer.Dtos.EntityChangeLogDto;
+namespace DynamicTrafficLightServer.Dtos;
 
 /// <summary>
 /// Represents filter parameters for querying entity change logs.
 /// </summary>
-public record EntityChangeLogFilterRequestModel
+public record EntityChangeLogFilterModel
 {
     /// <summary>
     /// The name of the entity to filter by.

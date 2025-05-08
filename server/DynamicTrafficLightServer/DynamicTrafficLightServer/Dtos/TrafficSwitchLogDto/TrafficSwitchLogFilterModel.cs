@@ -1,9 +1,9 @@
-﻿namespace DynamicTrafficLightServer.Dtos.TrafficSwitchLogDto;
+﻿namespace DynamicTrafficLightServer.Dtos;
 
 /// <summary>
 /// Represents filter parameters for querying traffic switch logs.
 /// </summary>
-public record TrafficSwitchLogFilterRequestModel
+public record TrafficSwitchLogFilterModel
 {
     /// <summary>
     /// The ID of the traffic light to filter by.

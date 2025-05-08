@@ -1,4 +1,4 @@
-﻿using DynamicTrafficLightServer.Dtos.TrafficSwitchLogDto;
+﻿using DynamicTrafficLightServer.Dtos;
 using DynamicTrafficLightServer.Models;
 using Riok.Mapperly.Abstractions;
 

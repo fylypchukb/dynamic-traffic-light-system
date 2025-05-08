@@ -1,4 +1,4 @@
-﻿namespace DynamicTrafficLightServer.Dtos.TrafficSwitchLogDto;
+﻿namespace DynamicTrafficLightServer.Dtos;
 
 /// <summary>
 /// Response model for a traffic switch log.
