@@ -67,7 +67,8 @@ export default function IntersectionsPage() {
       accessorKey: "lastUpdateTime",
       header: "Last Updated",
       cell: ({ row }) => {
-        return formatDistanceToNow(new Date(row.original.lastUpdateTime), { addSuffix: true });
+        const utcDate = new Date(row.original.lastUpdateTime + 'Z');
+        return formatDistanceToNow(utcDate, { addSuffix: true });
       },
     },
     {

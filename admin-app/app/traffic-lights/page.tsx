@@ -22,7 +22,6 @@ import Link from "next/link";
 
 export default function TrafficLightsPage() {
   const [trafficLights, setTrafficLights] = useState<TrafficLight[]>([]);
-  const [intersections, setIntersections] = useState<Record<number, Intersection>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,19 +29,9 @@ export default function TrafficLightsPage() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        const [trafficLightsResponse, intersectionsResponse] = await Promise.all([
-          trafficLightApi.getAll(),
-          intersectionApi.getAll(),
-        ]);
-        
-        setTrafficLights(trafficLightsResponse.result || []);
-        
-        // Create a map of intersection id to intersection for easy lookup
-        const intersectionMap: Record<number, Intersection> = {};
-        (intersectionsResponse.result || []).forEach((intersection) => {
-          intersectionMap[intersection.id] = intersection;
-        });
-        setIntersections(intersectionMap);
+        const response = await trafficLightApi.getAll();
+
+        setTrafficLights(response.result || []);
       } catch (err) {
         console.error("Failed to fetch traffic lights:", err);
         setError("Failed to load traffic lights. Please try again.");
@@ -64,13 +53,8 @@ export default function TrafficLightsPage() {
       header: "Name",
     },
     {
-      accessorKey: "intersectionId",
+      accessorKey: "intersectionName",
       header: "Intersection",
-      cell: ({ row }) => {
-        const intersectionId = row.original.intersectionId;
-        const intersection = intersections[intersectionId];
-        return intersection ? `${intersection.city} - ${intersection.location}` : intersectionId;
-      },
     },
     {
       accessorKey: "priority",

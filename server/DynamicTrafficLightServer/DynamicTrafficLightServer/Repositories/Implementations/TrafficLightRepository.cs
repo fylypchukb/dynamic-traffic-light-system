@@ -12,6 +12,7 @@ public class TrafficLightRepository(DataContext context) : ITrafficLightReposito
     {
         return await context.TrafficLights
             .AsNoTracking()
+            .Include(i => i.Intersection)
             .Include(i => i.CreatedBy)
             .Include(i => i.LastUpdatedBy)
             .ToListAsync(cancellationToken);
