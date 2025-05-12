@@ -4,8 +4,8 @@ import React, {useEffect, useState} from "react";
 import {ColumnDef} from "@tanstack/react-table";
 import {DataTable} from "@/components/ui/data-table";
 import {PanelHeader} from "@/components/ui/panel-header";
-import {configurationApi, trafficLightApi} from "@/lib/api";
-import {Configuration, TrafficLight} from "@/lib/api-types";
+import {configurationApi} from "@/lib/api";
+import {Configuration} from "@/lib/api-types";
 import {Edit, MoreHorizontal, Settings, Trash} from "lucide-react";
 import {
     DropdownMenu,
@@ -25,21 +25,21 @@ export default function ConfigurationsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                setIsLoading(true);
-                const response = await configurationApi.getAll();
+    const fetchData = async () => {
+        try {
+            setIsLoading(true);
+            const response = await configurationApi.getAll();
 
-                setConfigurations(response.result || []);
-            } catch (err) {
-                console.error("Failed to fetch configurations:", err);
-                setError("Failed to load configurations. Please try again.");
-            } finally {
-                setIsLoading(false);
-            }
+            setConfigurations(response.result || []);
+        } catch (err) {
+            console.error("Failed to fetch configurations:", err);
+            setError("Failed to load configurations. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
+    }
 
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -101,7 +101,16 @@ export default function ConfigurationsPage() {
                                     Edit
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={async () => {
+                                    try {
+                                        await configurationApi.delete(row.original.id);
+                                        await fetchData();
+                                    } catch (error) {
+                                        console.error("Delete failed", error);
+                                    }
+                                }}>
                                 <Trash className="mr-2 h-4 w-4"/>
                                 Delete
                             </DropdownMenuItem>

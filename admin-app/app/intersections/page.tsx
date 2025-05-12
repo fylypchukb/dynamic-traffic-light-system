@@ -26,21 +26,20 @@ export default function IntersectionsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-
-        async function fetchIntersections() {
-            try {
-                setIsLoading(true);
-                const response = await intersectionApi.getAll();
-                setIntersections(response.result || []);
-            } catch (err) {
-                console.error("Failed to fetch intersections:", err);
-                setError("Failed to load intersections. Please try again.");
-            } finally {
-                setIsLoading(false);
-            }
+    const fetchIntersections = async () => {
+        try {
+            setIsLoading(true);
+            const response = await intersectionApi.getAll();
+            setIntersections(response.result || []);
+        } catch (err) {
+            console.error("Failed to fetch intersections:", err);
+            setError("Failed to load intersections. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
+    }
 
+    useEffect(() => {
         fetchIntersections();
     }, []);
 
@@ -90,7 +89,16 @@ export default function IntersectionsPage() {
                                     Edit
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={async () => {
+                                    try {
+                                        await intersectionApi.delete(row.original.id);
+                                        await fetchIntersections();
+                                    } catch (error) {
+                                        console.error("Delete failed", error);
+                                    }
+                                }}>
                                 <Trash className="mr-2 h-4 w-4"/>
                                 Delete
                             </DropdownMenuItem>
