@@ -9,7 +9,6 @@ public static partial class ConfigurationMapper
 {
     [MapperIgnoreSource(nameof(Configuration.CreatedById))]
     [MapperIgnoreSource(nameof(Configuration.LastUpdatedById))]
-    [MapperIgnoreSource(nameof(Configuration.TrafficLight))]
     [MapProperty(nameof(Configuration.CreatedBy.Name), nameof(ConfigurationResponseModel.CreatedByName))]
     [MapProperty(nameof(Configuration.LastUpdatedBy.Name), nameof(ConfigurationResponseModel.LastUpdatedByName))]
     public static partial ConfigurationResponseModel ToResponseModel(Configuration configuration);

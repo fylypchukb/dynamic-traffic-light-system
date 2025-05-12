@@ -9,11 +9,12 @@ public static partial class TrafficLightMapper
 {
     [MapperIgnoreSource(nameof(TrafficLight.CreatedById))]
     [MapperIgnoreSource(nameof(TrafficLight.LastUpdatedById))]
-    [MapperIgnoreSource(nameof(TrafficLight.Intersection))]
     [MapperIgnoreSource(nameof(TrafficLight.Configurations))]
     [MapperIgnoreSource(nameof(TrafficLight.TrafficSwitchLogs))]
     [MapProperty(nameof(TrafficLight.CreatedBy.Name), nameof(TrafficLightResponseModel.CreatedByName))]
     [MapProperty(nameof(TrafficLight.LastUpdatedBy.Name), nameof(TrafficLightResponseModel.LastUpdatedByName))]
+    [MapProperty([nameof(TrafficLight.Intersection), nameof(TrafficLight.Intersection.Location)],
+        nameof(TrafficLightResponseModel.IntersectionName))]
     public static partial TrafficLightResponseModel ToResponseModel(TrafficLight trafficLight);
 
     [MapperIgnoreTarget(nameof(TrafficLight.Id))]

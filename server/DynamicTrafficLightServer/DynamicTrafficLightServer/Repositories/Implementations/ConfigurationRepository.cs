@@ -14,6 +14,7 @@ public class ConfigurationRepository(DataContext context) : IConfigurationReposi
             .AsNoTracking()
             .Include(i => i.CreatedBy)
             .Include(i => i.LastUpdatedBy)
+            .Include(i => i.TrafficLight)
             .ToListAsync(cancellationToken);
     }
 

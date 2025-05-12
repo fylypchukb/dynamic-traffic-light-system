@@ -16,6 +16,11 @@ public record TrafficLightResponseModel : BaseModelResponseDto
     public int IntersectionId { get; set; }
 
     /// <summary>
+    /// Name of the intersection where the traffic light is located.
+    /// </summary>
+    public string IntersectionName { get; set; } = string.Empty;
+
+    /// <summary>
     /// The priority level of the traffic light.
     /// </summary>
     public int Priority { get; set; }

@@ -43,7 +43,7 @@ public class IntersectionController(IIntersectionService intersectionService) : 
     {
         var result = await intersectionService.GetByIdAsync(id, cancellationToken);
 
-        return StatusCode((int)result.StatusCode, result.ToApiResponse());
+        return result.ToApiResponse();
     }
 
     /// <summary>
