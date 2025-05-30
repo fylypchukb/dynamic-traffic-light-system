@@ -1,11 +1,11 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Configuration, Intersection, TrafficLight} from "@/lib/api-types";
-import {configurationApi, intersectionApi, trafficLightApi} from "@/lib/api";
-import {Activity, AlertTriangle, CheckCircle, MapPin, Truck} from "lucide-react";
+import {Configuration, EntityChangeLog, Intersection, TrafficLight, TrafficSwitchLog} from "@/lib/api-types";
+import {configurationApi, intersectionApi, logsApi, trafficLightApi} from "@/lib/api";
+import {Activity, AlertTriangle, CheckCircle, MapPin} from "lucide-react";
 import {PageLoading} from "@/components/layout/page-loading";
 
 export default function Dashboard() {
@@ -14,21 +14,32 @@ export default function Dashboard() {
     const [intersections, setIntersections] = useState<Intersection[]>([]);
     const [trafficLights, setTrafficLights] = useState<TrafficLight[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [trafficLogs, setTrafficLogs] = useState<TrafficSwitchLog[]>([]);
+    const [entityLogs, setEntityLogs] = useState<EntityChangeLog[]>([]);
+
+    const [fromDate, toDate] = [
+        new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // last 24h
+        new Date().toISOString(),
+    ];
 
     useEffect(() => {
         async function fetchData() {
             try {
                 setIsLoading(true);
 
-                const [configsResponse, intersectionsResponse, lightsResponse] = await Promise.all([
+                const [configsResponse, intersectionsResponse, lightsResponse, logsResp, entityLogResp] = await Promise.all([
                     configurationApi.getAll(),
                     intersectionApi.getAll(),
                     trafficLightApi.getAll(),
+                    logsApi.getTrafficSwitchLogs({from: fromDate, to: toDate}),
+                    logsApi.getEntityChangeLogs({}),
                 ]);
 
                 setConfigurations(configsResponse.result || []);
                 setIntersections(intersectionsResponse.result || []);
                 setTrafficLights(lightsResponse.result || []);
+                setTrafficLogs(logsResp.result || []);
+                setEntityLogs(entityLogResp.result || []);
             } catch (err) {
                 console.error("Error fetching dashboard data:", err);
                 setError("Failed to load dashboard data. Please try again later.");
@@ -41,12 +52,32 @@ export default function Dashboard() {
     }, []);
 
     // Demo chart data
-    const trafficData = [
-        {name: "Morning", cars: 120, duration: 45},
-        {name: "Afternoon", cars: 230, duration: 75},
-        {name: "Evening", cars: 280, duration: 90},
-        {name: "Night", cars: 70, duration: 30},
-    ];
+    const trafficData = useMemo(() => {
+        const buckets: Record<string, { cars: number; duration: number }> = {};
+
+        trafficLogs.forEach((log) => {
+            const hour = new Date(log.timestamp).getHours();
+            let label;
+            if (hour >= 6 && hour < 12) label = "Morning";
+            else if (hour >= 12 && hour < 17) label = "Afternoon";
+            else if (hour >= 17 && hour < 21) label = "Evening";
+            else label = "Night";
+
+            if (!buckets[label]) buckets[label] = {cars: 0, duration: 0};
+
+            buckets[label].cars += log.vehicleCount;
+            buckets[label].duration += log.greenLightDurationSeconds;
+        });
+
+        return Object.entries(buckets).map(([name, {cars, duration}]) => ({
+            name,
+            cars,
+            duration,
+        }));
+    }, [trafficLogs]);
+
+    const sortedEntityLogs = useMemo(() =>
+        [...entityLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()), [entityLogs]);
 
     if (isLoading) {
         return <PageLoading/>;
@@ -118,19 +149,6 @@ export default function Dashboard() {
                         </p>
                     </CardContent>
                 </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Traffic Flow</CardTitle>
-                        <Truck className="h-4 w-4 text-muted-foreground"/>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">175</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Average vehicles/hour today
-                        </p>
-                    </CardContent>
-                </Card>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -164,45 +182,22 @@ export default function Dashboard() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {[1, 2, 3].map((item) => (
-                                    <div key={item}
+                                {sortedEntityLogs.slice(0, 5).map((log) => (
+                                    <div key={log.id}
                                          className="flex items-start gap-4 border-b pb-4 last:border-0 last:pb-0">
                                         <div className="rounded-full p-2 bg-muted">
                                             <Activity className="h-4 w-4"/>
                                         </div>
                                         <div>
-                                            <p className="font-medium">Configuration ID #{item} updated</p>
+                                            <p className="font-medium">
+                                                {log.action} {log.entityName} ID #{log.entityId}
+                                            </p>
                                             <p className="text-sm text-muted-foreground">
-                                                {new Date(Date.now() - item * 3600000).toLocaleString()}
+                                                {new Date(log.timestamp).toLocaleString()}
                                             </p>
                                         </div>
                                     </div>
                                 ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>System Status</CardTitle>
-                            <CardDescription>Current health metrics</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm">API Connectivity</span>
-                                    <span className="flex items-center text-green-500 text-sm">
-                    <CheckCircle className="h-4 w-4 mr-1"/> Online
-                  </span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm">Traffic Light Response</span>
-                                    <span className="text-sm">120ms</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm">Last Sync</span>
-                                    <span className="text-sm">{new Date().toLocaleTimeString()}</span>
-                                </div>
                             </div>
                         </CardContent>
                     </Card>
